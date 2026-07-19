@@ -58,6 +58,7 @@ const Tracker = {
         this.trackEvent('page_view', {});
         this.startScrollTracking();
         this.startTimeTracking();
+        this.startHeartbeat();
         this.trackExit();
         this.getLocation();
     },
@@ -149,6 +150,40 @@ const Tracker = {
             localStorage.setItem('tracking_data', JSON.stringify(this.data));
         } catch (e) {
             console.log('Tracking save error:', e);
+        }
+    },
+
+    startHeartbeat() {
+        // Send a heartbeat every 20 seconds while the visitor is on the page
+        // This lets the dashboard show "Live Now" count
+        setInterval(() => {
+            this.trackEvent('heartbeat', { timeOnPage: this.data.timeOnPage });
+            this.pushHeartbeat();
+        }, 20000);
+    },
+
+    async pushHeartbeat() {
+        try {
+            // Upsert: update the visit row with latest time_on_page + add heartbeat event
+            // We use PATCH to update the existing session's events array
+            const payload = {
+                time_on_page: this.data.timeOnPage,
+                scroll_depth: this.data.scrollDepth,
+                events: this.data.events
+            };
+
+            await fetch(`${SUPABASE_URL}/rest/v1/visits?session_id=eq.${encodeURIComponent(this.data.sessionId)}`, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify(payload)
+            });
+        } catch (e) {
+            // Silent fail — heartbeat isn't critical
         }
     },
 

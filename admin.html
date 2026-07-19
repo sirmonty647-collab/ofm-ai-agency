@@ -103,6 +103,31 @@
         .dash-actions button:hover { background: var(--bg-card-hover); border-color: var(--primary); }
         .dash-actions .logout-btn { border-color: var(--danger); color: var(--danger); }
         .dash-actions .logout-btn:hover { background: rgba(255,23,68,0.1); }
+        .live-stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .live-card {
+            position: relative;
+            border-color: rgba(0,200,83,0.3);
+        }
+        .live-card:hover { border-color: var(--success) !important; }
+        .live-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,200,83,0.7); }
+            70% { opacity: 0.7; box-shadow: 0 0 0 8px rgba(0,200,83,0); }
+            100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,200,83,0); }
+        }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -200,6 +225,7 @@
         .badge-view { background: rgba(0,200,83,0.2); color: var(--success); }
         .badge-scroll { background: rgba(255,214,0,0.2); color: var(--warning); }
         .badge-exit { background: rgba(255,23,68,0.2); color: var(--danger); }
+        .badge-heartbeat { background: rgba(41,121,255,0.2); color: #2979ff; }
         .sessions-section {
             background: var(--bg-card);
             border-radius: 16px;
@@ -322,6 +348,7 @@
             #dashboard { padding: 1rem; }
             .charts-row { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
+            .live-stats-row { grid-template-columns: 1fr 1fr; }
             .outreach-grid { grid-template-columns: 1fr; }
             .outreach-stats { grid-template-columns: 1fr 1fr; }
             .dash-header { flex-direction: column; align-items: flex-start; }
@@ -329,6 +356,7 @@
         }
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: 1fr; }
+            .live-stats-row { grid-template-columns: 1fr; }
             .outreach-stats { grid-template-columns: 1fr; }
         }
     </style>
@@ -355,6 +383,32 @@
                 <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
             </div>
         </div>
+
+        <!-- ===== LIVE STATS ROW ===== -->
+        <div class="live-stats-row" id="live-stats-row">
+            <div class="stat-card live-card" id="live-now-card">
+                <div class="live-dot"></div>
+                <div class="label">Live Now</div>
+                <div class="value green" id="live-now">0</div>
+                <div class="sub">People on site right now</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Last 15 Min</div>
+                <div class="value yellow" id="live-15min">0</div>
+                <div class="sub">Unique visitors</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Last Hour</div>
+                <div class="value pink" id="live-hour">0</div>
+                <div class="sub">Unique visitors</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Peak Today</div>
+                <div class="value" id="peak-today" style="color: #2979ff;">0</div>
+                <div class="sub">Highest concurrent</div>
+            </div>
+        </div>
+
         <div class="stats-grid" id="stats-grid">
             <div class="stat-card">
                 <div class="label">Total Visitors</div>
@@ -387,6 +441,7 @@
                 <div class="sub">Left without clicking CTA</div>
             </div>
         </div>
+
         <div class="charts-row">
             <div class="chart-card">
                 <h3>📱 Traffic Sources</h3>
@@ -397,6 +452,12 @@
                 <canvas id="daily-chart"></canvas>
             </div>
         </div>
+
+        <div class="chart-card" style="margin-bottom: 2rem;">
+            <h3>🔴 Real-Time Visitors <span style="color: var(--text-muted); font-weight: 400;">(Last 60 min — updates every 10s)</span></h3>
+            <canvas id="realtime-chart"></canvas>
+        </div>
+
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('events')">🕐 Events</button>
             <button class="tab-btn" onclick="switchTab('sessions')">👤 Sessions</button>
@@ -487,6 +548,8 @@
         let allOutreach = [];
         let sourcesChart = null;
         let dailyChart = null;
+        let realtimeChart = null;
+        let peakToday = 0;
 
         function handleLogin() {
             const password = document.getElementById('password-input').value;
@@ -570,6 +633,7 @@
         function refreshData() { loadData(); }
 
         function renderDashboard() {
+            renderLiveStats();
             if (allSessions.length === 0) {
                 document.getElementById('total-visitors').textContent = '0';
                 document.getElementById('total-clicks').textContent = '0';
@@ -602,6 +666,99 @@
             renderEvents();
             renderSessions();
             renderOutreach();
+        }
+
+        function renderLiveStats() {
+            const now = new Date();
+            const twoMinAgo = new Date(now.getTime() - 2 * 60 * 1000);
+            const fifteenMinAgo = new Date(now.getTime() - 15 * 60 * 1000);
+            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+
+            // Count sessions that have a heartbeat event within each time window
+            let liveNow = 0;
+            let last15min = 0;
+            let lastHour = 0;
+
+            allSessions.forEach(session => {
+                const heartbeats = (session.events || []).filter(e => e.type === 'heartbeat');
+                if (heartbeats.length === 0) return;
+
+                // Get the most recent heartbeat timestamp
+                const latestHeartbeat = new Date(Math.max(...heartbeats.map(h => new Date(h.timestamp).getTime())));
+                
+                if (latestHeartbeat >= twoMinAgo) liveNow++;
+                if (latestHeartbeat >= fifteenMinAgo) last15min++;
+                if (latestHeartbeat >= oneHourAgo) lastHour++;
+            });
+
+            // Update peak today
+            if (liveNow > peakToday) peakToday = liveNow;
+
+            document.getElementById('live-now').textContent = liveNow;
+            document.getElementById('live-15min').textContent = last15min;
+            document.getElementById('live-hour').textContent = lastHour;
+            document.getElementById('peak-today').textContent = peakToday;
+
+            renderRealtimeChart();
+        }
+
+        function renderRealtimeChart() {
+            const ctx = document.getElementById('realtime-chart').getContext('2d');
+            const now = new Date();
+            
+            // Build 60 data points (one per minute for last hour)
+            const labels = [];
+            const data = [];
+            
+            for (let i = 59; i >= 0; i--) {
+                const minuteStart = new Date(now.getTime() - (i + 1) * 60 * 1000);
+                const minuteEnd = new Date(now.getTime() - i * 60 * 1000);
+                
+                const count = allSessions.filter(session => {
+                    const heartbeats = (session.events || []).filter(e => e.type === 'heartbeat');
+                    return heartbeats.some(h => {
+                        const t = new Date(h.timestamp).getTime();
+                        return t >= minuteStart.getTime() && t < minuteEnd.getTime();
+                    });
+                }).length;
+                
+                const label = minuteEnd.getMinutes() === 0 ? minuteEnd.getHours() + ':00' : '';
+                labels.push(label);
+                data.push(count);
+            }
+
+            if (realtimeChart) realtimeChart.destroy();
+            realtimeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Visitors',
+                        data: data,
+                        backgroundColor: 'rgba(0,200,83,0.3)',
+                        borderColor: '#00c853',
+                        borderWidth: 1,
+                        borderRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    animation: { duration: 300 },
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 9 }, maxRotation: 0 },
+                            grid: { display: false }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 }, stepSize: 1 },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        }
+                    }
+                }
+            });
         }
 
         function renderSourcesChart() {
@@ -669,6 +826,7 @@
             if (type.includes('view') || type.includes('page')) return 'badge-view';
             if (type.includes('scroll')) return 'badge-scroll';
             if (type.includes('exit')) return 'badge-exit';
+            if (type.includes('heartbeat')) return 'badge-heartbeat';
             return 'badge-view';
         }
 
@@ -682,6 +840,7 @@
             if (event.type === 'location_detected') return (event.city || 'Unknown') + ', ' + (event.country || 'Unknown');
             if (event.type === 'age_verified') return 'Confirmed 18+';
             if (event.type === 'section_view') return 'Viewed: ' + (event.section || 'unknown');
+            if (event.type === 'heartbeat') return 'Still active — ' + (event.timeOnPage || 0) + 's on page';
             return '';
         }
 
@@ -797,7 +956,7 @@
             URL.revokeObjectURL(url);
         }
 
-        setInterval(refreshData, 15000);
+        setInterval(refreshData, 10000);
 
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('dash_auth') === 'true') {
