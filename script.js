@@ -134,6 +134,8 @@ const Tracker = {
             timeOnPage: this.data.timeOnPage
         });
         this.save();
+        // Immediately push to Supabase before navigation happens
+        this.pushToSupabase();
     },
 
     trackGalleryView() {
@@ -378,10 +380,27 @@ function initScrollHint() {
 }
 
 // ============================================
-// EXPOSE TRACKING GLOBALLY
+// CTA CLICK HANDLER — Track THEN navigate
 // ============================================
-function trackFanvueClick() {
-    Tracker.trackFanvueClick();
+function initCTAButtons() {
+    const heroBtn = document.getElementById('cta-btn-hero');
+    const galleryBtn = document.getElementById('cta-btn-gallery');
+
+    [heroBtn, galleryBtn].forEach(btn => {
+        if (!btn) return;
+        btn.addEventListener('click', function(e) {
+            e.preventDefault(); // Stop immediate navigation
+            const url = this.href;
+
+            // Track the click
+            Tracker.trackFanvueClick();
+
+            // Small delay to let Supabase request fire, then navigate
+            setTimeout(() => {
+                window.open(url, '_blank');
+            }, 300);
+        });
+    });
 }
 
 // ============================================
@@ -393,6 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initGallery();
     initLocationBadge();
     initScrollHint();
+    initCTAButtons();
 
     // Push to Supabase after 3 seconds (initial page view data)
     setTimeout(() => Tracker.pushToSupabase(), 3000);
