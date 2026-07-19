@@ -241,25 +241,6 @@ body {
     font-size: 0.8rem;
 }
 
-/* Urgency bar */
-.urgency-bar {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 1rem;
-    border-radius: 50px;
-    background: rgba(255,214,0,0.1);
-    border: 1px solid rgba(255,214,0,0.2);
-    font-size: 0.85rem;
-    color: var(--warning);
-    margin-bottom: 1.5rem;
-    animation: urgency-flash 2s ease-in-out infinite;
-}
-
-.urgency-icon {
-    font-size: 1rem;
-}
-
 /* ============================================
    BUTTONS
    ============================================ */
@@ -471,11 +452,6 @@ footer {
 @keyframes pulse-btn {
     0%, 100% { box-shadow: 0 4px 20px rgba(30,144,255,0.4); }
     50% { box-shadow: 0 4px 35px rgba(30,144,255,0.8); }
-}
-
-@keyframes urgency-flash {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
 }
 
 @keyframes pulse-dot {

@@ -317,24 +317,6 @@ async function initLocationBadge() {
 }
 
 // ============================================
-// URGENCY — Fake viewer count
-// ============================================
-function initUrgency() {
-    const viewerEl = document.getElementById('viewer-count');
-    if (!viewerEl) return;
-
-    // Random starting count between 87-157
-    let count = Math.floor(Math.random() * 70) + 87;
-    viewerEl.textContent = count;
-
-    // Increment randomly every 4-10 seconds
-    setInterval(() => {
-        count += Math.floor(Math.random() * 3) + 1;
-        viewerEl.textContent = count;
-    }, Math.floor(Math.random() * 6000) + 4000);
-}
-
-// ============================================
 // SCROLL HINT — Click to scroll to gallery
 // ============================================
 function initScrollHint() {
@@ -362,7 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initAgeVerification();
     initGallery();
     initLocationBadge();
-    initUrgency();
     initScrollHint();
 
     console.log('🔥 Stella Landing Page loaded');
