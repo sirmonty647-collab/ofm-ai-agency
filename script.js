@@ -315,10 +315,10 @@ async function initLocationBadge() {
     const tagline = document.getElementById('hero-tagline');
     if (tagline && !isRestricted && city) {
         const greetings = [
-            `Looking for a boyfriend / Content partner to make sextapes with me 😈`,
-            `Need a boyfriend / Content partner from ${city}... any takers? 💋`,
-            `Searching for someone in ${city} to star in my next video 🔥`,
-            `Someone from ${city} come help me make content 💕`
+            `Looking for someone in ${city} to keep me company tonight... 😏`,
+            `Just a lonely girl in ${city} looking for someone special 💙`,
+            `Anyone from ${city} want to keep me company? 😇`,
+            `Looking for someone in ${city} to get to know... if you know what I mean 😈`
         ];
         tagline.textContent = greetings[Math.floor(Math.random() * greetings.length)];
     }
