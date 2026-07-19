@@ -179,6 +179,30 @@ body {
     background-clip: text;
 }
 
+/* Active now indicator */
+.active-indicator {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: none;
+    -webkit-text-fill-color: var(--success);
+    color: var(--success);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    vertical-align: middle;
+    margin-left: 0.3rem;
+}
+
+.active-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--success);
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse-dot 2s infinite;
+}
+
 .hero-tagline {
     font-size: 1.15rem;
     color: var(--text-muted);

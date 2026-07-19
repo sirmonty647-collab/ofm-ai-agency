@@ -191,11 +191,9 @@ function initGallery() {
 
     const galleryImages = [
         "models/stella/gallery/image (1).webp",
-        "models/stella/gallery/image (2).webp",
         "models/stella/gallery/image2.webp",
-        "models/stella/gallery/Screenshot 2026-07-11 at 3.24.47 pm.png",
-        "models/stella/gallery/hf_20260711_021149_7f80980a-6e3d-4a1b-92c0-9f1b88859af4.png",
-        "models/stella/gallery/hf_20260711_030605_cda8acbb-87ae-4314-be79-8df9dcd9e261.png"
+        "models/stella/gallery/photoshoot1.webp",
+        "models/stella/gallery/selfie1.webp"
     ];
 
     galleryImages.forEach(src => {
