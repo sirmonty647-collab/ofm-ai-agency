@@ -6,7 +6,7 @@
     <title>Stella 💕</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -27,9 +27,10 @@
         <div class="nav-container">
             <div class="logo">Stella <span class="logo-dot">💕</span></div>
             <ul class="nav-links">
-                <li><a href="#gallery">Gallery</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#fanvue" class="nav-cta">Fanvue 🔥</a></li>
+                <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                <li><a href="#" class="nav-link" data-page="gallery">Gallery</a></li>
+                <li><a href="#" class="nav-link" data-page="about">About</a></li>
+                <li><a href="#" class="nav-cta" data-page="fanvue">Fanvue 🔥</a></li>
             </ul>
             <button class="hamburger" id="hamburger">
                 <span></span><span></span><span></span>
@@ -37,36 +38,65 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
+    <!-- ============================================ -->
+    <!-- PAGE 1 — HOME / HERO                          -->
+    <!-- ============================================ -->
+    <section id="page-home" class="page page-active">
         <div class="hero-bg"></div>
-        <div class="hero-content">
-            <div class="hero-image-wrapper">
-                <img src="models/stella/hero.webp" alt="Stella" class="hero-image" id="hero-img">
+        <div class="home-content">
+            <div class="home-image-wrapper">
+                <img src="models/stella/hero.webp" alt="Stella" class="home-image" id="hero-img">
+                <div class="home-image-ring"></div>
             </div>
-            <div class="hero-text">
-                <h1 class="hero-title">Stella</h1>
-                <p class="hero-tagline">Your sweetest fantasy 💋</p>
-                <div class="location-badge" id="location-badge">
-                    <span class="location-dot"></span>
-                    <span id="location-text">Detecting your location...</span>
-                </div>
+            <h1 class="home-name">Stella</h1>
+            <p class="home-tagline" id="home-tagline">Your sweetest fantasy 💋</p>
 
-                <a href="#fanvue" class="btn btn-primary btn-lg pulse" id="hero-cta">
+            <!-- Location badge — loads silently -->
+            <div class="location-badge" id="location-badge">
+                <span class="location-dot"></span>
+                <span id="location-text" class="location-text"></span>
+            </div>
 
-                    See More on Fanvue 🔥
+            <!-- Icon navigation -->
+            <div class="home-icons">
+                <a href="#" class="home-icon-btn" data-page="gallery">
+                    <span class="icon-circle">📸</span>
+                    <span class="icon-label">Gallery</span>
+                </a>
+                <a href="#" class="home-icon-btn" data-page="about">
+                    <span class="icon-circle">💁‍♀️</span>
+                    <span class="icon-label">About Me</span>
+                </a>
+                <a href="#" class="home-icon-btn" data-page="fanvue">
+                    <span class="icon-circle">🔗</span>
+                    <span class="icon-label">Fanvue</span>
+                </a>
+            </div>
+
+            <!-- Social links -->
+            <div class="home-socials">
+                <a href="https://www.fanvue.com/stellalina" target="_blank" rel="noopener noreferrer" class="social-link" onclick="trackFanvueClick()">
+                    <span class="social-icon">🔥</span>
+                    <span>Fanvue</span>
+                </a>
+                <a href="https://www.fanvue.com/stellalina" target="_blank" rel="noopener noreferrer" class="social-link" onclick="trackFanvueClick()">
+                    <span class="social-icon">💬</span>
+                    <span>DM Me</span>
+                </a>
+                <a href="https://www.fanvue.com/stellalina" target="_blank" rel="noopener noreferrer" class="social-link" onclick="trackFanvueClick()">
+                    <span class="social-icon">📸</span>
+                    <span>Instagram</span>
                 </a>
             </div>
         </div>
-        <div class="scroll-indicator">
-            <span>Scroll Down</span>
-            <div class="scroll-arrow">↓</div>
-        </div>
     </section>
 
-    <!-- Gallery Section -->
-    <section id="gallery" class="gallery">
-        <div class="section-header">
+    <!-- ============================================ -->
+    <!-- PAGE 2 — GALLERY                              -->
+    <!-- ============================================ -->
+    <section id="page-gallery" class="page">
+        <div class="page-header">
+            <button class="page-back" data-page="home">← Back</button>
             <h2>Gallery</h2>
             <p>A little sneak peek 😉</p>
         </div>
@@ -75,16 +105,48 @@
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="about-container">
+    <!-- ============================================ -->
+    <!-- PAGE 3 — ABOUT                                -->
+    <!-- ============================================ -->
+    <section id="page-about" class="page">
+        <div class="page-header">
+            <button class="page-back" data-page="home">← Back</button>
+            <h2>About Stella</h2>
+        </div>
+        <div class="about-content">
             <div class="about-image">
                 <img src="models/stella/gallery/image (1).webp" alt="Stella">
-
             </div>
             <div class="about-text">
-                <h2>About Stella</h2>
-                <p id="bio-text">Hey there, I'm Stella! I love connecting with my fans and sharing exclusive content you won't find anywhere else. Join me on Fanvue for a more personal experience 💕</p>
+                <p id="bio-text">Hey there, I'm Stella! I'm a free-spirited girl who loves connecting with people from all over the world. When I'm not creating content, you'll find me exploring new places, trying new things, and living life to the fullest. I have a thing for adventure, deep conversations, and making people feel special. Join me on Fanvue for a more personal experience — I'd love to get to know you 💕</p>
+                
+                <div class="about-details">
+                    <div class="detail-item">
+                        <span class="detail-emoji">🎂</span>
+                        <span class="detail-text">22 years old</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-emoji">📍</span>
+                        <span class="detail-text">Based in Australia</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-emoji">💕</span>
+                        <span class="detail-text">I love making new connections</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-emoji">🎵</span>
+                        <span class="detail-text">Music, travel & good vibes</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-emoji">😈</span>
+                        <span class="detail-text">I have a wild side too ;)</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-emoji">💬</span>
+                        <span class="detail-text">I reply to all my DMs personally</span>
+                    </div>
+                </div>
+
                 <div class="about-stats">
                     <div class="stat">
                         <span class="stat-number">10K+</span>
@@ -99,34 +161,42 @@
                         <span class="stat-label">Chat</span>
                     </div>
                 </div>
-                <a href="#fanvue" class="btn btn-primary" id="about-cta">Join Me on Fanvue 💕</a>
+
+                <a href="#" class="btn btn-primary btn-lg" data-page="fanvue" onclick="trackFanvueClick()">
+                    Subscribe on Fanvue 💕
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Fanvue CTA Section -->
-    <section id="fanvue" class="fanvue-cta">
-        <div class="cta-content">
-            <h2>Want to see the <span class="highlight">exclusive</span> side of me?</h2>
-            <p>Subscribe on Fanvue for uncensored content, private messaging, and so much more. I'm waiting for you 😘</p>
-            <div class="cta-features">
-                <div class="cta-feature">
-                    <span class="feature-icon">🔥</span>
-                    <span>Exclusive Content</span>
+    <!-- ============================================ -->
+    <!-- PAGE 4 — FANVUE CTA                           -->
+    <!-- ============================================ -->
+    <section id="page-fanvue" class="page">
+        <div class="page-header">
+            <button class="page-back" data-page="home">← Back</button>
+            <h2>Fanvue</h2>
+        </div>
+        <div class="fanvue-content">
+            <div class="fanvue-card">
+                <div class="fanvue-card-header">
+                    <span class="fanvue-badge">🔥 Most Popular</span>
+                    <h3>Premium Access</h3>
+                    <p class="fanvue-price">Subscribe now</p>
                 </div>
-                <div class="cta-feature">
-                    <span class="feature-icon">💬</span>
-                    <span>Private Chat</span>
-                </div>
-                <div class="cta-feature">
-                    <span class="feature-icon">🎁</span>
-                    <span>Custom Requests</span>
-                </div>
+                <ul class="fanvue-features">
+                    <li>✓ Uncensored exclusive content</li>
+                    <li>✓ Private 1-on-1 messaging</li>
+                    <li>✓ Custom photo & video requests</li>
+                    <li>✓ Daily posts & stories</li>
+                    <li>✓ Personal shoutouts</li>
+                    <li>✓ Chat with me anytime</li>
+                </ul>
+                <a href="https://www.fanvue.com/stellalina" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg pulse fanvue-subscribe" onclick="trackFanvueClick()">
+                    Subscribe on Fanvue 🔥
+                </a>
+                <p class="fanvue-disclaimer">18+ only. You won't regret it 😉</p>
             </div>
-            <a href="https://www.fanvue.com/stellalina" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg pulse" id="fanvue-cta-btn" onclick="trackFanvueClick()">
-                Subscribe on Fanvue 🔥
-            </a>
-            <p class="cta-sub">18+ only. You won't regret it 😉</p>
         </div>
     </section>
 

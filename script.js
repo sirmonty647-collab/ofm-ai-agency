@@ -1,15 +1,13 @@
 /* ============================================
-   STELLA LANDING PAGE — Tracking & Interactions
+   STELLA LANDING PAGE — Redesigned
    ============================================ */
 
 // ============================================
 // CONFIG
 // ============================================
 const CONFIG = {
-    TRACKING_ENDPOINT: 'tracking/data.json',
     SESSION_KEY: 'stella_session',
     AGE_VERIFIED_KEY: 'stella_age_verified',
-    DASHBOARD_PASSWORD: 'stella2026',
     FANVUE_URL: 'https://www.fanvue.com/stellalina'
 };
 
@@ -34,11 +32,6 @@ const Tracker = {
         timestamp: new Date().toISOString(),
         pageUrl: window.location.href,
         referrer: document.referrer || 'direct',
-        utmSource: getUrlParam('utm_source') || 'direct',
-        utmMedium: getUrlParam('utm_medium') || 'none',
-        utmCampaign: getUrlParam('utm_campaign') || 'none',
-        utmContent: getUrlParam('utm_content') || 'none',
-        utmTerm: getUrlParam('utm_term') || 'none',
         userAgent: navigator.userAgent,
         deviceType: getDeviceType(),
         screenSize: `${window.innerWidth}x${window.innerHeight}`,
@@ -141,33 +134,9 @@ const Tracker = {
 
     save() {
         try {
-            // Save to localStorage as backup
             localStorage.setItem('tracking_data', JSON.stringify(this.data));
-            
-            // Try to save to server via fetch (POST to a simple endpoint)
-            // For static hosting, we'll use localStorage + JSON file download approach
-            this.syncToServer();
         } catch (e) {
             console.log('Tracking save error:', e);
-        }
-    },
-
-    async syncToServer() {
-        try {
-            // For static sites, we store in localStorage and the admin dashboard reads from there
-            // In production, you'd replace this with a proper API endpoint
-            const payload = {
-                action: 'track',
-                data: this.data
-            };
-            
-            // Attempt to send via beacon for reliability
-            if (navigator.sendBeacon) {
-                const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-                navigator.sendBeacon('/api/track', blob);
-            }
-        } catch (e) {
-            // Silent fail - tracking should never break the page
         }
     },
 
@@ -199,7 +168,6 @@ function initAgeVerification() {
     const yesBtn = document.getElementById('age-yes');
     const noBtn = document.getElementById('age-no');
 
-    // Check if already verified
     if (localStorage.getItem(CONFIG.AGE_VERIFIED_KEY) === 'true') {
         overlay.classList.add('hidden');
         return;
@@ -218,6 +186,74 @@ function initAgeVerification() {
 }
 
 // ============================================
+// PAGE NAVIGATION SYSTEM
+// ============================================
+let currentPage = 'home';
+
+function initPageNavigation() {
+    // Nav links
+    document.querySelectorAll('.nav-link, .nav-cta').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = link.dataset.page;
+            if (page) navigateTo(page);
+        });
+    });
+
+    // Home icon buttons
+    document.querySelectorAll('.home-icon-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = btn.dataset.page;
+            if (page) navigateTo(page);
+        });
+    });
+
+    // Back buttons
+    document.querySelectorAll('.page-back').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = btn.dataset.page;
+            if (page) navigateTo(page);
+        });
+    });
+
+    // About page subscribe button
+    document.querySelector('.about-text .btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateTo('fanvue');
+    });
+}
+
+function navigateTo(page) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => {
+        p.classList.remove('page-active');
+    });
+
+    // Show target page
+    const target = document.getElementById(`page-${page}`);
+    if (target) {
+        target.classList.add('page-active');
+        currentPage = page;
+    }
+
+    // Update nav active state
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.page === page) {
+            link.classList.add('active');
+        }
+    });
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Track page view
+    Tracker.trackEvent('page_navigate', { page: page });
+}
+
+// ============================================
 // GALLERY
 // ============================================
 function initGallery() {
@@ -226,7 +262,6 @@ function initGallery() {
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxClose = document.querySelector('.lightbox-close');
 
-    // Gallery images from config (all correct Stella images)
     const galleryImages = [
         "models/stella/gallery/image (1).webp",
         "models/stella/gallery/image (2).webp",
@@ -236,11 +271,7 @@ function initGallery() {
         "models/stella/gallery/hf_20260711_030605_cda8acbb-87ae-4314-be79-8df9dcd9e261.png"
     ];
 
-    // Show all images (no shuffle, just show what we have)
-    const shuffled = [...galleryImages];
-
-
-    shuffled.forEach(src => {
+    galleryImages.forEach(src => {
         const img = document.createElement('img');
         img.src = src;
         img.loading = 'lazy';
@@ -290,14 +321,13 @@ function initGallery() {
 }
 
 // ============================================
-// NAVIGATION
+// NAVIGATION (scroll effect + hamburger)
 // ============================================
 function initNavigation() {
     const navbar = document.querySelector('.navbar');
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.querySelector('.nav-links');
 
-    // Scroll effect
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
@@ -306,12 +336,10 @@ function initNavigation() {
         }
     });
 
-    // Mobile menu
     hamburger.addEventListener('click', () => {
         navLinks.classList.toggle('active');
     });
 
-    // Close menu on link click
     navLinks.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             navLinks.classList.remove('active');
@@ -320,63 +348,15 @@ function initNavigation() {
 }
 
 // ============================================
-// SMOOTH SCROLL
-// ============================================
-function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if (href === '#fanvue') return; // Let the fanvue section handle its own CTA
-            
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-}
-
-// ============================================
-// EXPOSE TRACKING GLOBALLY
-// ============================================
-function trackFanvueClick() {
-    Tracker.trackFanvueClick();
-    // Open Fanvue in new tab
-    window.open(CONFIG.FANVUE_URL, '_blank');
-}
-
-// ============================================
-// INTERSECTION OBSERVER FOR SECTIONS
-// ============================================
-function initSectionTracking() {
-    const sections = document.querySelectorAll('section');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                Tracker.trackEvent('section_view', {
-                    section: entry.target.id || entry.target.className
-                });
-            }
-        });
-    }, { threshold: 0.3 });
-
-    sections.forEach(section => observer.observe(section));
-}
-
-// ============================================
-// IP-BASED PERSONALISATION ENGINE
+// IP-BASED LOCATION (silent — no "detecting" text)
 // ============================================
 let visitorLocation = { city: '', country: '', countryCode: '' };
 
 async function initLocationBadge() {
     const locationText = document.getElementById('location-text');
-    if (!locationText) return;
+    const badge = document.getElementById('location-badge');
+    if (!locationText || !badge) return;
 
-    // Try multiple IP APIs for redundancy
     const apis = [
         'https://ipapi.co/json/',
         'https://ip-api.com/json/?fields=city,country,countryCode',
@@ -391,7 +371,6 @@ async function initLocationBadge() {
             if (!res.ok) continue;
             const json = await res.json();
             
-            // Normalise different API response formats
             if (api.includes('ipapi.co')) {
                 data = { city: json.city, country: json.country_name, countryCode: json.country_code };
             } else if (api.includes('ip-api.com')) {
@@ -400,18 +379,16 @@ async function initLocationBadge() {
                 data = { city: json.city, country: json.country, countryCode: json.country_code };
             }
             
-            if (data && data.country) break; // Got valid data
+            if (data && data.country) break;
         } catch (e) {
-            continue; // Try next API
+            continue;
         }
     }
     
     if (!data) {
-        // Safe fallback — don't guess, just show generic
         data = { city: '', country: 'your area', countryCode: '' };
     }
 
-    
     visitorLocation = {
         city: data.city || '',
         country: data.country || '',
@@ -422,126 +399,56 @@ async function initLocationBadge() {
     const restrictedCountries = ['CN', 'RU', 'IR', 'KP', 'SY', 'CU'];
     const isRestricted = restrictedCountries.includes(countryCode);
     
-    // 1. Update location badge — shows exact location
+    // Update location badge silently
     if (isRestricted) {
         locationText.textContent = `⚠️ Limited availability in ${country}`;
-        const badge = document.querySelector('.location-badge');
-        badge.style.borderColor = 'rgba(255,214,0,0.3)';
         badge.style.color = '#ffd600';
-        badge.style.background = 'rgba(255,214,0,0.1)';
-        document.querySelector('.location-dot').style.background = '#ffd600';
     } else {
         const locationStr = city ? `${city}, ${country}` : country;
-        locationText.textContent = `✅ Available in ${locationStr}`;
+        locationText.textContent = `📍 ${locationStr}`;
     }
     
-    // 2. Personalise the hero tagline
-    const tagline = document.querySelector('.hero-tagline');
-    if (tagline && !isRestricted) {
+    // Show badge with fade
+    badge.classList.add('visible');
+    
+    // Personalise tagline
+    const tagline = document.getElementById('home-tagline');
+    if (tagline && !isRestricted && city) {
         const greetings = [
-            `Hey ${city || country}... I've been waiting for you 💋`,
-            `Your ${city || country} fantasy is here 😘`,
-            `Finally, someone from ${city || country} 💕`,
-            `I knew you'd find me, ${city || country} 🔥`
+            `Hey ${city}... I've been waiting for you 💋`,
+            `Your ${city} fantasy is here 😘`,
+            `Finally, someone from ${city} 💕`,
+            `I knew you'd find me, ${city} 🔥`
         ];
         tagline.textContent = greetings[Math.floor(Math.random() * greetings.length)];
     }
     
-    // 3. Personalise the CTA section
-    const ctaSub = document.querySelector('.cta-sub');
-    if (ctaSub && !isRestricted) {
-        const fanCount = Math.floor(Math.random() * 200) + 50;
-        ctaSub.textContent = `🔥 ${fanCount}+ fans from ${country} already subscribed. Don't miss out 💕`;
-    }
-    
-    // 4. Personalise the about bio
+    // Personalise bio
     const bioText = document.getElementById('bio-text');
-    if (bioText && !isRestricted) {
+    if (bioText && !isRestricted && country) {
         bioText.textContent = `Hey ${city || country}! I'm Stella and I've been getting so much love from fans in ${country} lately. I love connecting with people from all over the world, and I'd love to get to know you too. Join me on Fanvue for something special 💕`;
     }
-    
-    // 5. Update the "fans" stat to be location-aware
-    const statNumber = document.querySelector('.stat-number');
-    if (statNumber && !isRestricted) {
-        const localFans = Math.floor(Math.random() * 500) + 100;
-        statNumber.textContent = `${localFans}+`;
-    }
-    
-    // 6. Start fake social proof notifications
-    if (!isRestricted) {
-        startSocialProof(city || country);
-    }
 }
-
 
 // ============================================
-// SOCIAL PROOF NOTIFICATIONS
+// EXPOSE TRACKING GLOBALLY
 // ============================================
-let socialProofInterval = null;
-
-function startSocialProof(location) {
-    // Show first notification after 3 seconds
-    setTimeout(() => showNotification(location), 3000);
-    
-    // Then show random notifications every 15-30 seconds
-    socialProofInterval = setInterval(() => {
-        showNotification(location);
-    }, Math.floor(Math.random() * 15000) + 15000);
+function trackFanvueClick() {
+    Tracker.trackFanvueClick();
+    window.open(CONFIG.FANVUE_URL, '_blank');
 }
-
-function showNotification(location) {
-    const names = ['Mike', 'James', 'Chris', 'David', 'Alex', 'Tom', 'Ryan', 'Jake', 'Luke', 'Ben', 'Sam', 'Dan', 'Max', 'Leo', 'Kai'];
-    const actions = [
-        `just subscribed from ${location} 🔥`,
-        `is chatting with Stella right now 💬`,
-        `just unlocked exclusive content from ${location} 😈`,
-        `sent a tip from ${location} 💋`,
-        `just joined from ${location} 💕`
-    ];
-    
-    const name = names[Math.floor(Math.random() * names.length)];
-    const action = actions[Math.floor(Math.random() * actions.length)];
-    
-    const notification = document.createElement('div');
-    notification.className = 'social-proof';
-    notification.innerHTML = `
-        <div class="sp-avatar">${name[0]}</div>
-        <div class="sp-text">
-            <strong>${name}</strong> ${action}
-        </div>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    requestAnimationFrame(() => {
-        notification.classList.add('sp-active');
-    });
-    
-    // Remove after 5 seconds
-    setTimeout(() => {
-        notification.classList.remove('sp-active');
-        setTimeout(() => notification.remove(), 500);
-    }, 5000);
-}
-
 
 // ============================================
 // INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize tracking first
     Tracker.init();
-    
-    // Initialize UI
     initAgeVerification();
     initNavigation();
+    initPageNavigation();
     initGallery();
-    initSmoothScroll();
-    initSectionTracking();
-    initLocationBadge(); // Show location-based availability
+    initLocationBadge();
 
     console.log('🔥 Stella Landing Page loaded');
     console.log('📊 Tracking active - Session:', Tracker.data.sessionId);
 });
-
