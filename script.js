@@ -3,6 +3,12 @@
    ============================================ */
 
 // ============================================
+// SUPABASE CONFIG
+// ============================================
+const SUPABASE_URL = 'https://wmiydawnybullqwnuqvq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_9qzgTB6orAb-MSJO8s5qAg_2XLRxTOL';
+
+// ============================================
 // CONFIG
 // ============================================
 const CONFIG = {
@@ -29,9 +35,11 @@ function getSessionId() {
 const Tracker = {
     data: {
         sessionId: getSessionId(),
+        model: 'stella',
         timestamp: new Date().toISOString(),
         pageUrl: window.location.href,
         referrer: document.referrer || 'direct',
+        utmSource: getUtmSource(),
         userAgent: navigator.userAgent,
         deviceType: getDeviceType(),
         screenSize: `${window.innerWidth}x${window.innerHeight}`,
@@ -42,6 +50,7 @@ const Tracker = {
         ctaClicks: 0,
         galleryViews: 0,
         fanvueClicked: false,
+        location: {},
         events: []
     },
 
@@ -92,6 +101,7 @@ const Tracker = {
             if (document.visibilityState === 'hidden') {
                 this.trackEvent('page_exit', { timeOnPage: this.data.timeOnPage });
                 this.save();
+                this.pushToSupabase();
             }
         });
     },
@@ -140,6 +150,45 @@ const Tracker = {
         }
     },
 
+    async pushToSupabase() {
+        try {
+            const payload = {
+                session_id: this.data.sessionId,
+                model: this.data.model,
+                timestamp: this.data.timestamp,
+                page_url: this.data.pageUrl,
+                referrer: this.data.referrer,
+                utm_source: this.data.utmSource,
+                device_type: this.data.deviceType,
+                screen_size: this.data.screenSize,
+                language: this.data.language,
+                timezone: this.data.timezone,
+                scroll_depth: this.data.scrollDepth,
+                time_on_page: this.data.timeOnPage,
+                cta_clicks: this.data.ctaClicks,
+                fanvue_clicked: this.data.fanvueClicked,
+                location_city: this.data.location?.city || null,
+                location_country: this.data.location?.country || null,
+                location_country_code: this.data.location?.countryCode || null,
+                location_isp: this.data.location?.isp || null,
+                events: this.data.events
+            };
+
+            await fetch(`${SUPABASE_URL}/rest/v1/visits`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify(payload)
+            });
+        } catch (e) {
+            console.log('Supabase push error:', e);
+        }
+    },
+
     getData() {
         return this.data;
     }
@@ -153,6 +202,11 @@ function getDeviceType() {
     if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) return 'tablet';
     if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) return 'mobile';
     return 'desktop';
+}
+
+function getUtmSource() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('utm_source') || params.get('source') || params.get('ref') || null;
 }
 
 // ============================================
@@ -208,7 +262,6 @@ function initGallery() {
             Tracker.trackGalleryView();
         });
 
-        // Intersection Observer for lazy load animation
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -227,7 +280,6 @@ function initGallery() {
         grid.appendChild(img);
     });
 
-    // Lightbox controls
     lightboxClose.addEventListener('click', () => {
         lightbox.classList.remove('active');
     });
@@ -246,7 +298,7 @@ function initGallery() {
 }
 
 // ============================================
-// IP-BASED LOCATION + URGENCY
+// IP-BASED LOCATION
 // ============================================
 let visitorLocation = { city: '', country: '', countryCode: '' };
 
@@ -297,7 +349,6 @@ async function initLocationBadge() {
     const restrictedCountries = ['CN', 'RU', 'IR', 'KP', 'SY', 'CU'];
     const isRestricted = restrictedCountries.includes(countryCode);
     
-    // Update location badge silently
     if (isRestricted) {
         locationText.textContent = `⚠️ Limited availability in ${country}`;
         badge.style.color = '#ffd600';
@@ -306,10 +357,8 @@ async function initLocationBadge() {
         locationText.textContent = `📍 ${locationStr}`;
     }
     
-    // Show badge with fade
     badge.classList.add('visible');
     
-    // Personalise tagline
     const tagline = document.getElementById('hero-tagline');
     if (tagline && !isRestricted && city) {
         tagline.textContent = `Looking for someone in ${city} to keep me company tonight... 😏`;
@@ -317,7 +366,7 @@ async function initLocationBadge() {
 }
 
 // ============================================
-// SCROLL HINT — Click to scroll to gallery
+// SCROLL HINT
 // ============================================
 function initScrollHint() {
     const hint = document.querySelector('.scroll-hint');
@@ -333,7 +382,6 @@ function initScrollHint() {
 // ============================================
 function trackFanvueClick() {
     Tracker.trackFanvueClick();
-    // The href on the <a> tag handles the navigation
 }
 
 // ============================================
@@ -345,6 +393,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initGallery();
     initLocationBadge();
     initScrollHint();
+
+    // Push to Supabase after 3 seconds (initial page view data)
+    setTimeout(() => Tracker.pushToSupabase(), 3000);
 
     console.log('🔥 Stella Landing Page loaded');
     console.log('📊 Tracking active - Session:', Tracker.data.sessionId);

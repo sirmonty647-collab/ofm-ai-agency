@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stella — Tracking Dashboard</title>
+    <title>Stella — Analytics Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -21,34 +21,24 @@
             --text-muted: rgba(255,255,255,0.5);
             --border: rgba(255,255,255,0.08);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
         }
-
-        /* Login Screen */
         #login-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: var(--bg);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
         }
-
-        #login-screen.hidden {
-            display: none;
-        }
-
+        #login-screen.hidden { display: none; }
         .login-box {
             background: var(--bg-card);
             padding: 3rem;
@@ -58,18 +48,8 @@
             max-width: 400px;
             text-align: center;
         }
-
-        .login-box h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .login-box p {
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-        }
-
+        .login-box h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .login-box p { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem; }
         .login-box input {
             width: 100%;
             padding: 1rem;
@@ -82,11 +62,7 @@
             outline: none;
             transition: border-color 0.3s;
         }
-
-        .login-box input:focus {
-            border-color: var(--primary);
-        }
-
+        .login-box input:focus { border-color: var(--primary); }
         .login-box button {
             width: 100%;
             padding: 1rem;
@@ -99,30 +75,10 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-
-        .login-box button:hover {
-            background: #e02e5e;
-        }
-
-        .login-error {
-            color: var(--danger);
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            display: none;
-        }
-
-        /* Dashboard */
-        #dashboard {
-            display: none;
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        #dashboard.active {
-            display: block;
-        }
-
+        .login-box button:hover { background: #e02e5e; }
+        .login-error { color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; display: none; }
+        #dashboard { display: none; padding: 2rem; max-width: 1400px; margin: 0 auto; }
+        #dashboard.active { display: block; }
         .dash-header {
             display: flex;
             justify-content: space-between;
@@ -131,22 +87,9 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-
-        .dash-header h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-        }
-
-        .dash-header h1 span {
-            color: var(--primary);
-        }
-
-        .dash-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
+        .dash-header h1 { font-size: 1.8rem; font-weight: 800; }
+        .dash-header h1 span { color: var(--primary); }
+        .dash-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
         .dash-actions button {
             padding: 0.6rem 1.2rem;
             border-radius: 10px;
@@ -157,29 +100,15 @@
             font-size: 0.85rem;
             transition: all 0.3s;
         }
-
-        .dash-actions button:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--primary);
-        }
-
-        .dash-actions .logout-btn {
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-
-        .dash-actions .logout-btn:hover {
-            background: rgba(255,23,68,0.1);
-        }
-
-        /* Stats Grid */
+        .dash-actions button:hover { background: var(--bg-card-hover); border-color: var(--primary); }
+        .dash-actions .logout-btn { border-color: var(--danger); color: var(--danger); }
+        .dash-actions .logout-btn:hover { background: rgba(255,23,68,0.1); }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
-
         .stat-card {
             background: var(--bg-card);
             border-radius: 16px;
@@ -187,12 +116,7 @@
             border: 1px solid var(--border);
             transition: all 0.3s;
         }
-
-        .stat-card:hover {
-            border-color: var(--primary);
-            background: var(--bg-card-hover);
-        }
-
+        .stat-card:hover { border-color: var(--primary); background: var(--bg-card-hover); }
         .stat-card .label {
             font-size: 0.8rem;
             color: var(--text-muted);
@@ -200,48 +124,47 @@
             letter-spacing: 1px;
             margin-bottom: 0.5rem;
         }
-
-        .stat-card .value {
-            font-size: 2.2rem;
-            font-weight: 800;
-        }
-
+        .stat-card .value { font-size: 2.2rem; font-weight: 800; }
         .stat-card .value.green { color: var(--success); }
         .stat-card .value.pink { color: var(--primary); }
         .stat-card .value.yellow { color: var(--warning); }
-
-        .stat-card .sub {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 0.3rem;
-        }
-
-        /* Charts Row */
+        .stat-card .sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem; }
         .charts-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
             margin-bottom: 2rem;
         }
-
         .chart-card {
             background: var(--bg-card);
             border-radius: 16px;
             padding: 1.5rem;
             border: 1px solid var(--border);
         }
-
-        .chart-card h3 {
-            font-size: 1rem;
-            margin-bottom: 1rem;
+        .chart-card h3 { font-size: 1rem; margin-bottom: 1rem; color: var(--text-muted); }
+        .chart-card canvas { max-height: 250px; }
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        .tab-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            background: transparent;
             color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s;
         }
-
-        .chart-card canvas {
-            max-height: 250px;
-        }
-
-        /* Recent Events */
+        .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .tab-btn.active { color: var(--primary); background: var(--primary-dim); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
         .events-section {
             background: var(--bg-card);
             border-radius: 16px;
@@ -249,18 +172,8 @@
             border: 1px solid var(--border);
             margin-bottom: 2rem;
         }
-
-        .events-section h3 {
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            color: var(--text-muted);
-        }
-
-        .events-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
+        .events-section h3 { font-size: 1rem; margin-bottom: 1rem; color: var(--text-muted); }
+        .events-table { width: 100%; border-collapse: collapse; }
         .events-table th {
             text-align: left;
             padding: 0.8rem 0.5rem;
@@ -270,17 +183,12 @@
             letter-spacing: 1px;
             border-bottom: 1px solid var(--border);
         }
-
         .events-table td {
             padding: 0.6rem 0.5rem;
             font-size: 0.85rem;
             border-bottom: 1px solid rgba(255,255,255,0.03);
         }
-
-        .events-table tr:hover td {
-            background: rgba(255,255,255,0.02);
-        }
-
+        .events-table tr:hover td { background: rgba(255,255,255,0.02); }
         .badge {
             display: inline-block;
             padding: 0.2rem 0.6rem;
@@ -288,26 +196,17 @@
             font-size: 0.7rem;
             font-weight: 600;
         }
-
         .badge-click { background: rgba(255,59,111,0.2); color: var(--primary); }
         .badge-view { background: rgba(0,200,83,0.2); color: var(--success); }
         .badge-scroll { background: rgba(255,214,0,0.2); color: var(--warning); }
         .badge-exit { background: rgba(255,23,68,0.2); color: var(--danger); }
-
-        /* Sessions List */
         .sessions-section {
             background: var(--bg-card);
             border-radius: 16px;
             padding: 1.5rem;
             border: 1px solid var(--border);
         }
-
-        .sessions-section h3 {
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            color: var(--text-muted);
-        }
-
+        .sessions-section h3 { font-size: 1rem; margin-bottom: 1rem; color: var(--text-muted); }
         .session-item {
             display: flex;
             justify-content: space-between;
@@ -317,86 +216,138 @@
             flex-wrap: wrap;
             gap: 0.5rem;
         }
-
-        .session-item:last-child {
-            border-bottom: none;
-        }
-
-        .session-info {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
+        .session-item:last-child { border-bottom: none; }
+        .session-info { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
         .session-device {
             font-size: 0.75rem;
             padding: 0.2rem 0.5rem;
             border-radius: 6px;
             background: rgba(255,255,255,0.05);
         }
-
-        .session-time {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .session-referrer {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .session-cta {
-            font-size: 0.8rem;
-        }
-
+        .session-time { font-size: 0.8rem; color: var(--text-muted); }
+        .session-referrer { font-size: 0.8rem; color: var(--text-muted); }
+        .session-cta { font-size: 0.8rem; }
         .session-cta.yes { color: var(--success); }
         .session-cta.no { color: var(--text-muted); }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
+        .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .outreach-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .outreach-form {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        .outreach-form h3 { font-size: 1rem; margin-bottom: 1rem; color: var(--text-muted); }
+        .outreach-form label {
+            display: block;
+            font-size: 0.85rem;
             color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            margin-top: 1rem;
         }
-
-        .empty-state .icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .outreach-form label:first-child { margin-top: 0; }
+        .outreach-form input, .outreach-form textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.3s;
+            font-family: 'Inter', sans-serif;
         }
-
-        /* Responsive */
+        .outreach-form input:focus, .outreach-form textarea:focus { border-color: var(--primary); }
+        .outreach-form textarea { resize: vertical; min-height: 80px; }
+        .outreach-form .submit-btn {
+            margin-top: 1rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        .outreach-form .submit-btn:hover { background: #e02e5e; }
+        .outreach-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .outreach-stat {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .outreach-stat .value { font-size: 2.5rem; font-weight: 800; }
+        .outreach-stat .value.green { color: var(--success); }
+        .outreach-stat .value.pink { color: var(--primary); }
+        .outreach-stat .label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.3rem; }
+        .outreach-history {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            margin-top: 1rem;
+        }
+        .outreach-history h3 { font-size: 1rem; margin-bottom: 1rem; color: var(--text-muted); }
+        .outreach-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .outreach-entry:last-child { border-bottom: none; }
+        .outreach-entry .date { font-size: 0.8rem; color: var(--text-muted); }
+        .outreach-entry .links { color: var(--warning); font-weight: 600; }
+        .outreach-entry .subs { color: var(--success); font-weight: 600; }
+        .outreach-entry .notes { font-size: 0.8rem; color: var(--text-muted); width: 100%; margin-top: 0.3rem; }
         @media (max-width: 768px) {
             #dashboard { padding: 1rem; }
             .charts-row { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
+            .outreach-grid { grid-template-columns: 1fr; }
+            .outreach-stats { grid-template-columns: 1fr 1fr; }
             .dash-header { flex-direction: column; align-items: flex-start; }
             .session-item { flex-direction: column; align-items: flex-start; }
         }
-
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: 1fr; }
+            .outreach-stats { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-
-    <!-- Login Screen -->
     <div id="login-screen">
         <div class="login-box">
             <h1>🔐 Dashboard</h1>
-            <p>Enter password to view tracking data</p>
+            <p>Enter password to view analytics</p>
             <input type="password" id="password-input" placeholder="Enter password..." autocomplete="off">
             <button onclick="handleLogin()">Unlock Dashboard</button>
             <p class="login-error" id="login-error">Incorrect password. Try again.</p>
         </div>
     </div>
-
-    <!-- Dashboard -->
     <div id="dashboard">
         <div class="dash-header">
             <div>
                 <h1>📊 <span>Stella</span> Analytics</h1>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.3rem;">Real-time tracking dashboard</p>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.3rem;">Supabase-powered real-time dashboard</p>
             </div>
             <div class="dash-actions">
                 <button onclick="exportData()">📥 Export CSV</button>
@@ -404,8 +355,6 @@
                 <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
             </div>
         </div>
-
-        <!-- Stats Cards -->
         <div class="stats-grid" id="stats-grid">
             <div class="stat-card">
                 <div class="label">Total Visitors</div>
@@ -438,8 +387,6 @@
                 <div class="sub">Left without clicking CTA</div>
             </div>
         </div>
-
-        <!-- Charts -->
         <div class="charts-row">
             <div class="chart-card">
                 <h3>📱 Traffic Sources</h3>
@@ -450,55 +397,100 @@
                 <canvas id="daily-chart"></canvas>
             </div>
         </div>
-
-        <!-- Recent Events -->
-        <div class="events-section">
-            <h3>🕐 Recent Events</h3>
-            <div style="overflow-x: auto;">
-                <table class="events-table" id="events-table">
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Event</th>
-                            <th>Session</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody id="events-body">
-                        <tr><td colspan="4" class="empty-state">No events yet. Waiting for visitors...</td></tr>
-                    </tbody>
-                </table>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('events')">🕐 Events</button>
+            <button class="tab-btn" onclick="switchTab('sessions')">👤 Sessions</button>
+            <button class="tab-btn" onclick="switchTab('outreach')">📤 Outreach Tracker</button>
+        </div>
+        <div class="tab-content active" id="tab-events">
+            <div class="events-section">
+                <h3>🕐 Recent Events</h3>
+                <div style="overflow-x: auto;">
+                    <table class="events-table" id="events-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Event</th>
+                                <th>Session</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="events-body">
+                            <tr><td colspan="4" class="empty-state">No events yet. Waiting for visitors...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-
-        <!-- Sessions -->
-        <div class="sessions-section">
-            <h3>👤 Visitor Sessions</h3>
-            <div id="sessions-list">
-                <div class="empty-state">
-                    <div class="icon">📡</div>
-                    <p>Waiting for data... Share your landing page link to start tracking visitors!</p>
+        <div class="tab-content" id="tab-sessions">
+            <div class="sessions-section">
+                <h3>👤 Visitor Sessions</h3>
+                <div id="sessions-list">
+                    <div class="empty-state">
+                        <div class="icon">📡</div>
+                        <p>Waiting for data... Share your landing page link to start tracking visitors!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="tab-outreach">
+            <div class="outreach-grid">
+                <div class="outreach-form">
+                    <h3>📤 Log Outreach</h3>
+                    <label>Date</label>
+                    <input type="date" id="outreach-date">
+                    <label>Links Sent</label>
+                    <input type="number" id="outreach-links" min="0" placeholder="e.g. 10">
+                    <label>Subs Gained</label>
+                    <input type="number" id="outreach-subs" min="0" placeholder="e.g. 3">
+                    <label>Notes</label>
+                    <textarea id="outreach-notes" placeholder="Where did you send them? Any notes..."></textarea>
+                    <button class="submit-btn" onclick="logOutreach()">📊 Log It</button>
+                </div>
+                <div>
+                    <div class="outreach-stats">
+                        <div class="outreach-stat">
+                            <div class="value pink" id="total-links-sent">0</div>
+                            <div class="label">Total Links Sent</div>
+                        </div>
+                        <div class="outreach-stat">
+                            <div class="value green" id="total-subs-gained">0</div>
+                            <div class="label">Total Subs Gained</div>
+                        </div>
+                        <div class="outreach-stat">
+                            <div class="value yellow" id="outreach-conversion">0%</div>
+                            <div class="label">Conversion Rate</div>
+                        </div>
+                        <div class="outreach-stat">
+                            <div class="value" id="outreach-days" style="color: var(--primary);">0</div>
+                            <div class="label">Days Active</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="outreach-history">
+                <h3>📋 Outreach History</h3>
+                <div id="outreach-list">
+                    <div class="empty-state">
+                        <div class="icon">📤</div>
+                        <p>No outreach logged yet. Start tracking your links sent & subs gained!</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
-        // ============================================
-        // DASHBOARD CONFIG
-        // ============================================
+        const SUPABASE_URL = 'https://wmiydawnybullqwnuqvq.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_9qzgTB6orAb-MSJO8s5qAg_2XLRxTOL';
         const DASHBOARD_PASSWORD = 'stella2026';
         let allSessions = [];
+        let allOutreach = [];
         let sourcesChart = null;
         let dailyChart = null;
 
-        // ============================================
-        // AUTH
-        // ============================================
         function handleLogin() {
             const password = document.getElementById('password-input').value;
             const error = document.getElementById('login-error');
-            
             if (password === DASHBOARD_PASSWORD) {
                 localStorage.setItem('dash_auth', 'true');
                 document.getElementById('login-screen').classList.add('hidden');
@@ -516,179 +508,124 @@
             document.getElementById('dashboard').classList.remove('active');
         }
 
-        // Check auth on load
         if (localStorage.getItem('dash_auth') === 'true') {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('dashboard').classList.add('active');
         }
 
-        // Enter key to login
         document.getElementById('password-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') handleLogin();
         });
 
-        // ============================================
-        // DATA LOADING
-        // ============================================
-        function loadData() {
-            // Load from localStorage (all visitors store their data here)
-            // In production, this would fetch from a server
-            const storedData = localStorage.getItem('tracking_data');
-            
-            if (storedData) {
-                try {
-                    const session = JSON.parse(storedData);
-                    allSessions = [session];
-                    renderDashboard();
-                } catch (e) {
-                    console.error('Error parsing tracking data:', e);
-                }
-            }
-
-            // Also try to load from any stored sessions
-            loadAllSessions();
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelector(`.tab-btn[onclick*="${tab}"]`).classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
         }
 
-        function loadAllSessions() {
-            // For demo purposes, generate some sample data if none exists
-            if (allSessions.length === 0) {
-                generateSampleData();
-            }
+        async function loadData() {
+            await Promise.all([fetchVisits(), fetchOutreach()]);
             renderDashboard();
         }
 
-        function refreshData() {
-            loadData();
-        }
-
-        // ============================================
-        // SAMPLE DATA (for demo when no real data yet)
-        // ============================================
-        function generateSampleData() {
-            const sources = ['direct', 'instagram', 'twitter', 'tiktok', 'telegram'];
-            const devices = ['mobile', 'desktop', 'tablet'];
-            const countries = ['US', 'UK', 'CA', 'AU', 'DE', 'FR', 'BR'];
-            
-            for (let i = 0; i < 25; i++) {
-                const date = new Date();
-                date.setDate(date.getDate() - Math.floor(Math.random() * 7));
-                date.setHours(Math.floor(Math.random() * 24));
-                
-                const session = {
-                    sessionId: 'sess_demo_' + i,
-                    timestamp: date.toISOString(),
-                    referrer: sources[Math.floor(Math.random() * sources.length)],
-                    utmSource: sources[Math.floor(Math.random() * sources.length)],
-                    deviceType: devices[Math.floor(Math.random() * devices.length)],
-                    scrollDepth: Math.floor(Math.random() * 100),
-                    timeOnPage: Math.floor(Math.random() * 120),
-                    ctaClicks: Math.random() > 0.6 ? 1 : 0,
-                    fanvueClicked: Math.random() > 0.6,
-                    location: {
-                        country: countries[Math.floor(Math.random() * countries.length)]
-                    },
-                    events: [
-                        { type: 'page_view', timestamp: date.toISOString() },
-                        { type: 'scroll_50', timestamp: new Date(date.getTime() + 10000).toISOString() }
-                    ]
-                };
-                
-                if (session.fanvueClicked) {
-                    session.events.push({ type: 'fanvue_click', timestamp: new Date(date.getTime() + 30000).toISOString() });
+        async function fetchVisits() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/visits?order=timestamp.desc&limit=500`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    allSessions = data.map(v => ({
+                        sessionId: v.session_id,
+                        model: v.model,
+                        timestamp: v.timestamp,
+                        pageUrl: v.page_url,
+                        referrer: v.referrer || 'direct',
+                        utmSource: v.utm_source,
+                        deviceType: v.device_type,
+                        screenSize: v.screen_size,
+                        language: v.language,
+                        timezone: v.timezone,
+                        scrollDepth: v.scroll_depth || 0,
+                        timeOnPage: v.time_on_page || 0,
+                        ctaClicks: v.cta_clicks || 0,
+                        fanvueClicked: v.fanvue_clicked || false,
+                        location: { city: v.location_city, country: v.location_country, countryCode: v.location_country_code, isp: v.location_isp },
+                        events: v.events || []
+                    }));
                 }
-                
-                allSessions.push(session);
-            }
+            } catch (e) { console.error('Error fetching visits:', e); }
         }
 
-        // ============================================
-        // RENDER DASHBOARD
-        // ============================================
-        function renderDashboard() {
-            if (allSessions.length === 0) return;
+        async function fetchOutreach() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/outreach?order=date.desc&limit=100`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                });
+                if (res.ok) allOutreach = await res.json();
+            } catch (e) { console.error('Error fetching outreach:', e); }
+        }
 
-            // Stats
+        function refreshData() { loadData(); }
+
+        function renderDashboard() {
+            if (allSessions.length === 0) {
+                document.getElementById('total-visitors').textContent = '0';
+                document.getElementById('total-clicks').textContent = '0';
+                document.getElementById('click-rate').textContent = 'CTR: 0%';
+                document.getElementById('avg-time').textContent = '0s';
+                document.getElementById('avg-scroll').textContent = '0%';
+                document.getElementById('today-visitors').textContent = '0';
+                document.getElementById('bounce-rate').textContent = '0%';
+                renderOutreach();
+                return;
+            }
             const totalVisitors = allSessions.length;
             const totalClicks = allSessions.filter(s => s.fanvueClicked).length;
             const avgTime = Math.round(allSessions.reduce((sum, s) => sum + (s.timeOnPage || 0), 0) / totalVisitors);
             const avgScroll = Math.round(allSessions.reduce((sum, s) => sum + (s.scrollDepth || 0), 0) / totalVisitors);
             const ctr = totalVisitors > 0 ? ((totalClicks / totalVisitors) * 100).toFixed(1) : 0;
-            
-            // Today's visitors
             const today = new Date().toDateString();
             const todayVisitors = allSessions.filter(s => new Date(s.timestamp).toDateString() === today).length;
-            
-            // Bounce rate (visited but didn't click CTA)
             const bounced = allSessions.filter(s => !s.fanvueClicked).length;
             const bounceRate = totalVisitors > 0 ? ((bounced / totalVisitors) * 100).toFixed(1) : 0;
-
-            // Update stats
             document.getElementById('total-visitors').textContent = totalVisitors;
             document.getElementById('total-clicks').textContent = totalClicks;
-            document.getElementById('click-rate').textContent = `CTR: ${ctr}%`;
+            document.getElementById('click-rate').textContent = 'CTR: ' + ctr + '%';
             document.getElementById('avg-time').textContent = formatTime(avgTime);
-            document.getElementById('avg-scroll').textContent = `${avgScroll}%`;
+            document.getElementById('avg-scroll').textContent = avgScroll + '%';
             document.getElementById('today-visitors').textContent = todayVisitors;
-            document.getElementById('bounce-rate').textContent = `${bounceRate}%`;
-
-            // Charts
+            document.getElementById('bounce-rate').textContent = bounceRate + '%';
             renderSourcesChart();
             renderDailyChart();
-
-            // Events
             renderEvents();
-
-            // Sessions
             renderSessions();
+            renderOutreach();
         }
 
-        // ============================================
-        // CHARTS
-        // ============================================
         function renderSourcesChart() {
             const ctx = document.getElementById('sources-chart').getContext('2d');
-            
             const sources = {};
             allSessions.forEach(s => {
                 const source = s.utmSource || s.referrer || 'direct';
                 sources[source] = (sources[source] || 0) + 1;
             });
-
             const labels = Object.keys(sources);
             const data = Object.values(sources);
             const colors = ['#ff3b6f', '#ffd600', '#00c853', '#2979ff', '#aa00ff', '#ff6d00'];
-
             if (sourcesChart) sourcesChart.destroy();
-
             sourcesChart = new Chart(ctx, {
                 type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: colors.slice(0, labels.length),
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: 'rgba(255,255,255,0.7)', padding: 15, font: { size: 11 } }
-                        }
-                    }
-                }
+                data: { labels: labels, datasets: [{ data: data, backgroundColor: colors.slice(0, labels.length), borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,0.7)', padding: 15, font: { size: 11 } } } } }
             });
         }
 
         function renderDailyChart() {
             const ctx = document.getElementById('daily-chart').getContext('2d');
-            
             const last7Days = [];
             const counts = [];
-            
             for (let i = 6; i >= 0; i--) {
                 const date = new Date();
                 date.setDate(date.getDate() - i);
@@ -696,88 +633,34 @@
                 last7Days.push(dateStr.split(' ').slice(1, 3).join(' '));
                 counts.push(allSessions.filter(s => new Date(s.timestamp).toDateString() === dateStr).length);
             }
-
             if (dailyChart) dailyChart.destroy();
-
             dailyChart = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: last7Days,
-                    datasets: [{
-                        label: 'Visitors',
-                        data: counts,
-                        borderColor: '#ff3b6f',
-                        backgroundColor: 'rgba(255,59,111,0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#ff3b6f',
-                        pointBorderColor: '#ff3b6f',
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: {
-                            ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 } },
-                            grid: { color: 'rgba(255,255,255,0.05)' }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 }, stepSize: 1 },
-                            grid: { color: 'rgba(255,255,255,0.05)' }
-                        }
-                    }
-                }
+                data: { labels: last7Days, datasets: [{ label: 'Visitors', data: counts, borderColor: '#ff3b6f', backgroundColor: 'rgba(255,59,111,0.1)', fill: true, tension: 0.4, pointBackgroundColor: '#ff3b6f', pointBorderColor: '#ff3b6f', pointRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { beginAtZero: true, ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 }, stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.05)' } } } }
             });
         }
 
-        // ============================================
-        // EVENTS
-        // ============================================
         function renderEvents() {
             const tbody = document.getElementById('events-body');
-            
-            // Collect all events from all sessions
             const allEvents = [];
             allSessions.forEach(session => {
                 (session.events || []).forEach(event => {
-                    allEvents.push({
-                        ...event,
-                        sessionId: session.sessionId
-                    });
+                    allEvents.push({ ...event, sessionId: session.sessionId });
                 });
             });
-
-            // Sort by timestamp descending
             allEvents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-            // Take latest 50
             const recentEvents = allEvents.slice(0, 50);
-
             if (recentEvents.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No events yet. Waiting for visitors...</td></tr>';
                 return;
             }
-
             tbody.innerHTML = recentEvents.map(event => {
                 const time = new Date(event.timestamp).toLocaleTimeString();
                 const badgeClass = getBadgeClass(event.type);
                 const shortSession = event.sessionId ? event.sessionId.substr(0, 12) + '...' : 'N/A';
                 const details = getEventDetails(event);
-                
-                return `
-                    <tr>
-                        <td style="white-space: nowrap;">${time}</td>
-                        <td><span class="badge ${badgeClass}">${event.type}</span></td>
-                        <td style="font-size: 0.75rem; color: var(--text-muted);">${shortSession}</td>
-                        <td style="font-size: 0.8rem; color: var(--text-muted);">${details}</td>
-                    </tr>
-                `;
+                return '<tr><td style="white-space: nowrap;">' + time + '</td><td><span class="badge ' + badgeClass + '">' + event.type + '</span></td><td style="font-size: 0.75rem; color: var(--text-muted);">' + shortSession + '</td><td style="font-size: 0.8rem; color: var(--text-muted);">' + details + '</td></tr>';
             }).join('');
         }
 
@@ -790,37 +673,25 @@
         }
 
         function getEventDetails(event) {
-            if (event.type === 'fanvue_click') return `Click #${event.clickCount || 1} at ${event.scrollDepth || 0}% scroll`;
+            if (event.type === 'fanvue_click') return 'Click #' + (event.clickCount || 1) + ' at ' + (event.scrollDepth || 0) + '% scroll';
             if (event.type === 'scroll_25') return 'Reached 25% of page';
             if (event.type === 'scroll_50') return 'Reached 50% of page';
             if (event.type === 'scroll_75') return 'Reached 75% of page';
             if (event.type === 'scroll_100') return 'Reached bottom of page';
-            if (event.type === 'page_view') return `From: ${event.referrer || 'direct'}`;
-            if (event.type === 'location_detected') return `${event.city || 'Unknown'}, ${event.country || 'Unknown'}`;
+            if (event.type === 'page_view') return 'From: ' + (event.referrer || 'direct');
+            if (event.type === 'location_detected') return (event.city || 'Unknown') + ', ' + (event.country || 'Unknown');
             if (event.type === 'age_verified') return 'Confirmed 18+';
-            if (event.type === 'section_view') return `Viewed: ${event.section || 'unknown'}`;
+            if (event.type === 'section_view') return 'Viewed: ' + (event.section || 'unknown');
             return '';
         }
 
-        // ============================================
-        // SESSIONS
-        // ============================================
         function renderSessions() {
             const container = document.getElementById('sessions-list');
-
             if (allSessions.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">📡</div>
-                        <p>Waiting for data... Share your landing page link to start tracking visitors!</p>
-                    </div>
-                `;
+                container.innerHTML = '<div class="empty-state"><div class="icon">📡</div><p>Waiting for data... Share your landing page link to start tracking visitors!</p></div>';
                 return;
             }
-
-            // Sort by timestamp descending
             const sorted = [...allSessions].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
             container.innerHTML = sorted.map(session => {
                 const time = new Date(session.timestamp).toLocaleString();
                 const device = session.deviceType || 'unknown';
@@ -828,38 +699,83 @@
                 const clicked = session.fanvueClicked ? 'yes' : 'no';
                 const scrollDepth = session.scrollDepth || 0;
                 const timeOnPage = session.timeOnPage || 0;
-                const location = session.location ? 
-                    [session.location.city, session.location.country].filter(Boolean).join(', ') : 
-                    'Unknown';
-
-                return `
-                    <div class="session-item">
-                        <div class="session-info">
-                            <span class="session-device">${device}</span>
-                            <span class="session-time">${time}</span>
-                            <span class="session-referrer">📍 ${location}</span>
-                            <span class="session-referrer">🔗 ${referrer}</span>
-                            <span class="session-referrer">📜 ${scrollDepth}%</span>
-                            <span class="session-referrer">⏱ ${formatTime(timeOnPage)}</span>
-                        </div>
-                        <div>
-                            <span class="session-cta ${clicked}">
-                                ${clicked === 'yes' ? '✅ Clicked Fanvue' : '❌ No click'}
-                            </span>
-                        </div>
-                    </div>
-                `;
+                const location = session.location ? [session.location.city, session.location.country].filter(Boolean).join(', ') : 'Unknown';
+                return '<div class="session-item"><div class="session-info"><span class="session-device">' + device + '</span><span class="session-time">' + time + '</span><span class="session-referrer">📍 ' + location + '</span><span class="session-referrer">🔗 ' + referrer + '</span><span class="session-referrer">📜 ' + scrollDepth + '%</span><span class="session-referrer">⏱ ' + formatTime(timeOnPage) + '</span></div><div><span class="session-cta ' + clicked + '">' + (clicked === 'yes' ? '✅ Clicked Fanvue' : '❌ No click') + '</span></div></div>';
             }).join('');
         }
 
-        // ============================================
-        // UTILITIES
-        // ============================================
+        function renderOutreach() {
+            const totalLinks = allOutreach.reduce((sum, o) => sum + (o.links_sent || 0), 0);
+            const totalSubs = allOutreach.reduce((sum, o) => sum + (o.subs_gained || 0), 0);
+            const convRate = totalLinks > 0 ? ((totalSubs / totalLinks) * 100).toFixed(1) : 0;
+            const uniqueDays = new Set(allOutreach.map(o => o.date)).size;
+
+            document.getElementById('total-links-sent').textContent = totalLinks;
+            document.getElementById('total-subs-gained').textContent = totalSubs;
+            document.getElementById('outreach-conversion').textContent = convRate + '%';
+            document.getElementById('outreach-days').textContent = uniqueDays;
+
+            const list = document.getElementById('outreach-list');
+            if (allOutreach.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="icon">📤</div><p>No outreach logged yet. Start tracking your links sent & subs gained!</p></div>';
+                return;
+            }
+            list.innerHTML = allOutreach.map(o => {
+                return '<div class="outreach-entry"><span class="date">' + o.date + '</span><span class="links">🔗 ' + (o.links_sent || 0) + ' sent</span><span class="subs">✅ ' + (o.subs_gained || 0) + ' subs</span>' + (o.notes ? '<div class="notes">📝 ' + o.notes + '</div>' : '') + '</div>';
+            }).join('');
+        }
+
+        async function logOutreach() {
+            const date = document.getElementById('outreach-date').value;
+            const links = parseInt(document.getElementById('outreach-links').value) || 0;
+            const subs = parseInt(document.getElementById('outreach-subs').value) || 0;
+            const notes = document.getElementById('outreach-notes').value.trim();
+
+            if (!date) {
+                alert('Please select a date.');
+                return;
+            }
+            if (links === 0 && subs === 0) {
+                alert('Enter at least links sent or subs gained.');
+                return;
+            }
+
+            try {
+                const res = await fetch(SUPABASE_URL + '/rest/v1/outreach', {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        model: 'stella',
+                        date: date,
+                        links_sent: links,
+                        subs_gained: subs,
+                        notes: notes
+                    })
+                });
+                if (res.ok || res.status === 201) {
+                    document.getElementById('outreach-date').value = '';
+                    document.getElementById('outreach-links').value = '';
+                    document.getElementById('outreach-subs').value = '';
+                    document.getElementById('outreach-notes').value = '';
+                    await fetchOutreach();
+                    renderOutreach();
+                }
+            } catch (e) {
+                console.error('Error logging outreach:', e);
+                alert('Failed to log outreach. Check console.');
+            }
+        }
+
         function formatTime(seconds) {
-            if (seconds < 60) return `${seconds}s`;
+            if (seconds < 60) return seconds + 's';
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
-            return `${mins}m ${secs}s`;
+            return mins + 'm ' + secs + 's';
         }
 
         function exportData() {
@@ -867,31 +783,22 @@
                 alert('No data to export yet.');
                 return;
             }
-
             let csv = 'Session ID,Timestamp,Referrer,UTM Source,Device,Scroll Depth,Time on Page (s),Clicked Fanvue,Location\n';
-            
             allSessions.forEach(s => {
-                const location = s.location ? 
-                    [s.location.city, s.location.country].filter(Boolean).join(', ') : 
-                    'Unknown';
-                csv += `"${s.sessionId}","${s.timestamp}","${s.referrer}","${s.utmSource}","${s.deviceType}",${s.scrollDepth},${s.timeOnPage},${s.fanvueClicked},"${location}"\n`;
+                const location = s.location ? [s.location.city, s.location.country].filter(Boolean).join(', ') : 'Unknown';
+                csv += '"' + s.sessionId + '","' + s.timestamp + '","' + s.referrer + '","' + (s.utmSource || '') + '","' + s.deviceType + '",' + s.scrollDepth + ',' + s.timeOnPage + ',' + s.fanvueClicked + ',"' + location + '"\n';
             });
-
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `stella-analytics-${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = 'stella-analytics-' + new Date().toISOString().split('T')[0] + '.csv';
             a.click();
             URL.revokeObjectURL(url);
         }
 
-        // ============================================
-        // AUTO-REFRESH
-        // ============================================
-        setInterval(refreshData, 10000); // Refresh every 10 seconds
+        setInterval(refreshData, 15000);
 
-        // Load on page load
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('dash_auth') === 'true') {
                 loadData();
