@@ -1,5 +1,5 @@
 /* ============================================
-   STELLA LANDING PAGE — Redesigned
+   STELLA LANDING PAGE — Conversion Optimised
    ============================================ */
 
 // ============================================
@@ -148,11 +148,6 @@ const Tracker = {
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
-function getUrlParam(name) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(name);
-}
-
 function getDeviceType() {
     const ua = navigator.userAgent;
     if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) return 'tablet';
@@ -183,74 +178,6 @@ function initAgeVerification() {
         Tracker.trackEvent('age_rejected', {});
         window.location.href = 'https://google.com';
     });
-}
-
-// ============================================
-// PAGE NAVIGATION SYSTEM
-// ============================================
-let currentPage = 'home';
-
-function initPageNavigation() {
-    // Nav links
-    document.querySelectorAll('.nav-link, .nav-cta').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const page = link.dataset.page;
-            if (page) navigateTo(page);
-        });
-    });
-
-    // Home icon buttons
-    document.querySelectorAll('.home-icon-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const page = btn.dataset.page;
-            if (page) navigateTo(page);
-        });
-    });
-
-    // Back buttons
-    document.querySelectorAll('.page-back').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const page = btn.dataset.page;
-            if (page) navigateTo(page);
-        });
-    });
-
-    // About page subscribe button
-    document.querySelector('.about-text .btn')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        navigateTo('fanvue');
-    });
-}
-
-function navigateTo(page) {
-    // Hide all pages
-    document.querySelectorAll('.page').forEach(p => {
-        p.classList.remove('page-active');
-    });
-
-    // Show target page
-    const target = document.getElementById(`page-${page}`);
-    if (target) {
-        target.classList.add('page-active');
-        currentPage = page;
-    }
-
-    // Update nav active state
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-        if (link.dataset.page === page) {
-            link.classList.add('active');
-        }
-    });
-
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Track page view
-    Tracker.trackEvent('page_navigate', { page: page });
 }
 
 // ============================================
@@ -321,34 +248,7 @@ function initGallery() {
 }
 
 // ============================================
-// NAVIGATION (scroll effect + hamburger)
-// ============================================
-function initNavigation() {
-    const navbar = document.querySelector('.navbar');
-    const hamburger = document.getElementById('hamburger');
-    const navLinks = document.querySelector('.nav-links');
-
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    });
-
-    hamburger.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-    });
-
-    navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-        });
-    });
-}
-
-// ============================================
-// IP-BASED LOCATION (silent — no "detecting" text)
+// IP-BASED LOCATION + URGENCY
 // ============================================
 let visitorLocation = { city: '', country: '', countryCode: '' };
 
@@ -412,22 +312,46 @@ async function initLocationBadge() {
     badge.classList.add('visible');
     
     // Personalise tagline
-    const tagline = document.getElementById('home-tagline');
+    const tagline = document.getElementById('hero-tagline');
     if (tagline && !isRestricted && city) {
         const greetings = [
-            `Looking for someone in ${city} who wants to help me film content 😈`,
-            `Need a filming partner from ${city}... any takers? 💋`,
+            `Looking for a boyfriend / Content partner to make sextapes with me 😈`,
+            `Need a boyfriend / Content partner from ${city}... any takers? 💋`,
             `Searching for someone in ${city} to star in my next video 🔥`,
             `Someone from ${city} come help me make content 💕`
         ];
         tagline.textContent = greetings[Math.floor(Math.random() * greetings.length)];
     }
-    
-    // Personalise bio
-    const bioText = document.getElementById('bio-text');
-    if (bioText && !isRestricted && country) {
-        bioText.textContent = `Hey ${city || country}! I'm Stella and I've been getting so much love from fans in ${country} lately. I love connecting with people from all over the world, and I'd love to get to know you too. Join me on Fanvue for something special 💕`;
-    }
+}
+
+// ============================================
+// URGENCY — Fake viewer count
+// ============================================
+function initUrgency() {
+    const viewerEl = document.getElementById('viewer-count');
+    if (!viewerEl) return;
+
+    // Random starting count between 87-157
+    let count = Math.floor(Math.random() * 70) + 87;
+    viewerEl.textContent = count;
+
+    // Increment randomly every 4-10 seconds
+    setInterval(() => {
+        count += Math.floor(Math.random() * 3) + 1;
+        viewerEl.textContent = count;
+    }, Math.floor(Math.random() * 6000) + 4000);
+}
+
+// ============================================
+// SCROLL HINT — Click to scroll to gallery
+// ============================================
+function initScrollHint() {
+    const hint = document.querySelector('.scroll-hint');
+    if (!hint) return;
+
+    hint.addEventListener('click', () => {
+        document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
+    });
 }
 
 // ============================================
@@ -435,7 +359,7 @@ async function initLocationBadge() {
 // ============================================
 function trackFanvueClick() {
     Tracker.trackFanvueClick();
-    window.open(CONFIG.FANVUE_URL, '_blank');
+    // The href on the <a> tag handles the navigation
 }
 
 // ============================================
@@ -444,10 +368,10 @@ function trackFanvueClick() {
 document.addEventListener('DOMContentLoaded', () => {
     Tracker.init();
     initAgeVerification();
-    initNavigation();
-    initPageNavigation();
     initGallery();
     initLocationBadge();
+    initUrgency();
+    initScrollHint();
 
     console.log('🔥 Stella Landing Page loaded');
     console.log('📊 Tracking active - Session:', Tracker.data.sessionId);
