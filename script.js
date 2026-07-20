@@ -154,12 +154,17 @@ const Tracker = {
     },
 
     startHeartbeat() {
-        // Send a heartbeat every 20 seconds while the visitor is on the page
-        // This lets the dashboard show "Live Now" count
+        // Send first heartbeat immediately (1 second) so dashboard shows live count fast
+        // Then every 30 seconds after that
+        setTimeout(() => {
+            this.trackEvent('heartbeat', { timeOnPage: this.data.timeOnPage });
+            this.pushHeartbeat();
+        }, 1000);
+
         setInterval(() => {
             this.trackEvent('heartbeat', { timeOnPage: this.data.timeOnPage });
             this.pushHeartbeat();
-        }, 20000);
+        }, 30000);
     },
 
     async pushHeartbeat() {
