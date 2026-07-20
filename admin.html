@@ -735,16 +735,27 @@
             const fifteenMinAgo = new Date(now.getTime() - 15 * 60 * 1000);
             const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
-            // Count sessions that have a heartbeat event within each time window
+            // Deduplicate by IP address (stored in location.isp field)
+            // This prevents the same person from being counted multiple times
+            const seenIps = {};
+
+            // Filter sessions with heartbeats, dedup by IP
+            const sessionsWithHeartbeats = allSessions.filter(session => {
+                const heartbeats = (session.events || []).filter(e => e.type === 'heartbeat');
+                if (heartbeats.length === 0) return false;
+
+                const ip = session.location?.isp || session.sessionId;
+                if (seenIps[ip]) return false;
+                seenIps[ip] = true;
+                return true;
+            });
+
             let liveNow = 0;
             let last15min = 0;
             let lastHour = 0;
 
-            allSessions.forEach(session => {
+            sessionsWithHeartbeats.forEach(session => {
                 const heartbeats = (session.events || []).filter(e => e.type === 'heartbeat');
-                if (heartbeats.length === 0) return;
-
-                // Get the most recent heartbeat timestamp
                 const latestHeartbeat = new Date(Math.max(...heartbeats.map(h => new Date(h.timestamp).getTime())));
                 
                 if (latestHeartbeat >= twoMinAgo) liveNow++;

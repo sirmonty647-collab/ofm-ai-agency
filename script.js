@@ -117,7 +117,7 @@ const Tracker = {
                 region: data.region,
                 country: data.country_name,
                 countryCode: data.country_code,
-                isp: data.org
+                isp: data.ip  // Store IP in isp field for dedup in dashboard
             };
             this.trackEvent('location_detected', this.data.location);
             this.save();
