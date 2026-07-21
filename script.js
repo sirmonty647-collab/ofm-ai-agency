@@ -448,6 +448,119 @@ function initCTAButtons() {
 }
 
 // ============================================
+// SHOOTING STARS — subtle blue particles
+// ============================================
+function initShootingStars() {
+    const canvas = document.getElementById('stars-canvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let scrollSpeed = 0;
+    let lastScrollY = window.scrollY;
+    let scrollVelocity = 0;
+    const STAR_COUNT = 60;
+
+    function resize() {
+        const hero = canvas.parentElement;
+        canvas.width = hero.offsetWidth;
+        canvas.height = hero.offsetHeight;
+    }
+
+    class Star {
+        constructor() {
+            this.reset();
+        }
+
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 1.8 + 0.4;
+            this.speedX = (Math.random() - 0.5) * 0.3;
+            this.speedY = Math.random() * 0.4 + 0.1;
+            this.opacity = Math.random() * 0.5 + 0.15;
+            this.trail = [];
+            this.trailLength = Math.floor(Math.random() * 4) + 2;
+            this.hue = 210 + Math.random() * 30; // blue range
+        }
+
+        update(speedMultiplier) {
+            const spd = speedMultiplier || 1;
+            this.x += this.speedX * spd;
+            this.y += this.speedY * spd;
+
+            // Store trail
+            this.trail.push({ x: this.x, y: this.y });
+            if (this.trail.length > this.trailLength) {
+                this.trail.shift();
+            }
+
+            // Reset if off screen
+            if (this.y > canvas.height + 10 || this.x < -10 || this.x > canvas.width + 10) {
+                this.reset();
+                this.y = -5;
+                this.x = Math.random() * canvas.width;
+            }
+        }
+
+        draw(ctx) {
+            // Draw trail
+            for (let i = 0; i < this.trail.length; i++) {
+                const alpha = (i / this.trail.length) * this.opacity * 0.4;
+                ctx.beginPath();
+                ctx.arc(this.trail[i].x, this.trail[i].y, this.size * (i / this.trail.length) * 0.6, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 80%, 70%, ${alpha})`;
+                ctx.fill();
+            }
+
+            // Draw star
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${this.hue}, 80%, 80%, ${this.opacity})`;
+            ctx.fill();
+
+            // Soft glow
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity * 0.12})`;
+            ctx.fill();
+        }
+    }
+
+    function init() {
+        resize();
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+            stars.push(new Star());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Smooth scroll velocity
+        const currentScrollY = window.scrollY;
+        scrollVelocity += (Math.abs(currentScrollY - lastScrollY) - scrollVelocity) * 0.1;
+        scrollVelocity = Math.max(0, scrollVelocity);
+        lastScrollY = currentScrollY;
+
+        // Map scroll velocity to speed multiplier (1 = slow, 4 = fast)
+        const speedMultiplier = 1 + Math.min(scrollVelocity / 50, 3);
+
+        stars.forEach(star => {
+            star.update(speedMultiplier);
+            star.draw(ctx);
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', resize);
+    init();
+    animate();
+}
+
+// ============================================
 // INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -457,6 +570,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initLocationBadge();
     initScrollHint();
     initCTAButtons();
+    initShootingStars();
+
 
 
     // Push to Supabase after 3 seconds (initial page view data)
