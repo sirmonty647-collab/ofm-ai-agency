@@ -282,16 +282,23 @@ body {
     letter-spacing: 0.5px;
     border-radius: 16px;
     box-shadow: 0 6px 30px rgba(30,144,255,0.5);
+    animation: float-cta 2s ease-in-out infinite;
 }
 
 .btn-hero:hover {
-    transform: translateY(-3px);
+    transform: translateY(-3px) scale(1.02);
     box-shadow: 0 10px 40px rgba(30,144,255,0.7);
 }
 
 .btn-pulse {
     animation: pulse-btn 2s infinite;
 }
+
+@keyframes float-cta {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
 
 
 .hero-sub {
@@ -488,61 +495,26 @@ body {
 }
 
 /* ============================================
-   SOCIAL PROOF — DM CONVERSATION
+   SOCIAL PROOF — INLINE DM SCREENSHOT
    ============================================ */
-.social-proof-section {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 2rem 2rem 4rem;
+.social-proof-inline {
+    margin-top: 1.2rem;
     text-align: center;
 }
 
-.social-proof-header {
-    margin-bottom: 1.5rem;
-}
-
-.social-proof-header h2 {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
-    margin-bottom: 0.3rem;
-}
-
-.social-proof-header p {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-.social-proof-content {
-    position: relative;
-}
-
-.social-proof-img {
+.social-proof-inline-img {
     width: 100%;
-    max-width: 400px;
-    border-radius: 16px;
+    max-width: 340px;
+    border-radius: 14px;
     border: 1px solid var(--border);
-    box-shadow: 0 8px 30px rgba(30,144,255,0.15);
+    box-shadow: 0 6px 25px rgba(30,144,255,0.12);
     transition: transform 0.3s ease;
 }
 
-.social-proof-img:hover {
+.social-proof-inline-img:hover {
     transform: scale(1.02);
 }
 
-.social-proof-caption {
-    margin-top: 1rem;
-    font-style: italic;
-    color: var(--text-muted);
-    font-size: 0.95rem;
-}
-
-.social-proof-caption p {
-    background: var(--bg-card);
-    display: inline-block;
-    padding: 0.5rem 1.2rem;
-    border-radius: 50px;
-    border: 1px solid var(--border);
-}
 
 /* ============================================
    FOOTER
