@@ -273,9 +273,26 @@ body {
     font-size: 1.15rem;
 }
 
+/* Hero CTA — full width, bigger */
+.btn-hero {
+    display: block;
+    width: 100%;
+    padding: 1.2rem 2rem;
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+    border-radius: 16px;
+    box-shadow: 0 6px 30px rgba(30,144,255,0.5);
+}
+
+.btn-hero:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 40px rgba(30,144,255,0.7);
+}
+
 .btn-pulse {
     animation: pulse-btn 2s infinite;
 }
+
 
 .hero-sub {
     font-size: 0.8rem;
@@ -284,8 +301,68 @@ body {
     opacity: 0.6;
 }
 
+/* Urgency text — "2 spots left" */
+.urgency-text {
+    font-size: 0.85rem;
+    color: var(--danger);
+    margin-top: 0.5rem;
+    font-weight: 600;
+    animation: urgency-pulse 1.5s ease-in-out infinite;
+}
+
+.urgency-highlight {
+    color: var(--warning);
+    font-weight: 800;
+}
+
+@keyframes urgency-pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+
+/* ============================================
+   COUNTDOWN TIMER
+   ============================================ */
+.countdown-container {
+    margin-bottom: 1rem;
+}
+
+.countdown-label {
+    font-size: 0.8rem;
+    color: var(--warning);
+    margin-bottom: 0.2rem;
+    font-weight: 500;
+}
+
+.countdown-timer {
+    font-size: 2.2rem;
+    font-weight: 800;
+    font-family: var(--font-display);
+    color: var(--warning);
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(255,214,0,0.3);
+    animation: countdown-pulse 1s ease-in-out infinite;
+}
+
+.countdown-timer.expired {
+    color: var(--danger);
+    text-shadow: 0 0 20px rgba(255,59,111,0.3);
+    animation: none;
+}
+
+.countdown-label.expired {
+    color: var(--danger);
+}
+
+@keyframes countdown-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
 /* Scroll hint */
 .scroll-hint {
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -411,8 +488,66 @@ body {
 }
 
 /* ============================================
+   SOCIAL PROOF — DM CONVERSATION
+   ============================================ */
+.social-proof-section {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+    text-align: center;
+}
+
+.social-proof-header {
+    margin-bottom: 1.5rem;
+}
+
+.social-proof-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    margin-bottom: 0.3rem;
+}
+
+.social-proof-header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.social-proof-content {
+    position: relative;
+}
+
+.social-proof-img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 30px rgba(30,144,255,0.15);
+    transition: transform 0.3s ease;
+}
+
+.social-proof-img:hover {
+    transform: scale(1.02);
+}
+
+.social-proof-caption {
+    margin-top: 1rem;
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.social-proof-caption p {
+    background: var(--bg-card);
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    border: 1px solid var(--border);
+}
+
+/* ============================================
    FOOTER
    ============================================ */
+
 footer {
     padding: 2rem;
     text-align: center;

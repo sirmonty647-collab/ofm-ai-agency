@@ -444,6 +444,48 @@ function initCTAButtons() {
 }
 
 // ============================================
+// COUNTDOWN TIMER — localStorage-based 7 min
+// ============================================
+const COUNTDOWN_KEY = 'stella_countdown_end';
+const COUNTDOWN_DURATION = 7 * 60; // 7 minutes in seconds
+
+function initCountdown() {
+    const timerEl = document.getElementById('countdown-timer');
+    const labelEl = document.querySelector('.countdown-label');
+    const container = document.getElementById('countdown-container');
+    if (!timerEl || !container) return;
+
+    let endTime = localStorage.getItem(COUNTDOWN_KEY);
+
+    if (!endTime) {
+        // First visit — set the end time
+        endTime = Date.now() + COUNTDOWN_DURATION * 1000;
+        localStorage.setItem(COUNTDOWN_KEY, endTime.toString());
+    } else {
+        endTime = parseInt(endTime);
+    }
+
+    function updateTimer() {
+        const now = Date.now();
+        const remaining = Math.max(0, Math.round((endTime - now) / 1000));
+
+        if (remaining <= 0) {
+            timerEl.textContent = 'Offer expired';
+            timerEl.classList.add('expired');
+            if (labelEl) labelEl.classList.add('expired');
+            return;
+        }
+
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
+}
+
+// ============================================
 // INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -453,6 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initLocationBadge();
     initScrollHint();
     initCTAButtons();
+    initCountdown();
 
     // Push to Supabase after 3 seconds (initial page view data)
     setTimeout(() => Tracker.pushToSupabase(), 3000);
@@ -460,3 +503,4 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🔥 Stella Landing Page loaded');
     console.log('📊 Tracking active - Session:', Tracker.data.sessionId);
 });
+
