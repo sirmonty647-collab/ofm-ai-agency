@@ -403,10 +403,11 @@ async function initLocationBadge() {
     
     const tagline = document.getElementById('hero-tagline');
     if (tagline && !isRestricted && city) {
-        tagline.textContent = `${city} girl ready to keep you company tonight 💦 Get my Free Solo Video - Me playing with myself in bed showcasing my naughtiest toys if you sub before the promo ends`;
+        tagline.textContent = `${city} girl ready to keep you company tonight 💦 Get my Free Solo Video when you subscribe`;
     } else if (tagline) {
-        tagline.textContent = `Girl ready to keep you company tonight 💦 Get my Free Solo Video - Me playing with myself in bed showcasing my naughtiest toys if you sub before the promo ends`;
+        tagline.textContent = `Girl ready to keep you company tonight 💦 Get my Free Solo Video when you subscribe`;
     }
+
 
 }
 
