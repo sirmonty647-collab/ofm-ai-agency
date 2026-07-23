@@ -1,1 +1,17 @@
-fake-demo.html
+# Session files
+stella_session*
+*.session
+*.session-journal
+
+# Environment
+.env
+
+# Data files
+conversations.json
+leads.json
+stats.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
