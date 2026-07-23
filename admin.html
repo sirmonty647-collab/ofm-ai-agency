@@ -522,6 +522,7 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('events')">🕐 Events</button>
             <button class="tab-btn" onclick="switchTab('sessions')">👤 Sessions</button>
+            <button class="tab-btn" onclick="switchTab('leads')">📋 Leads</button>
             <button class="tab-btn" onclick="switchTab('outreach')">📤 Outreach Tracker</button>
         </div>
         <div class="tab-content active" id="tab-events">
@@ -552,6 +553,44 @@
                         <div class="icon">📡</div>
                         <p>Waiting for data... Share your landing page link to start tracking visitors!</p>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="tab-leads">
+            <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="stat-card">
+                    <div class="label">Unique Users Today</div>
+                    <div class="value green" id="unique-users-today">0</div>
+                    <div class="sub">New people who messaged</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Links Sent Today</div>
+                    <div class="value pink" id="links-sent-today">0</div>
+                    <div class="sub">stellav.baby drops</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Total Leads</div>
+                    <div class="value yellow" id="total-leads">0</div>
+                    <div class="sub">All time unique users</div>
+                </div>
+            </div>
+            <div class="sessions-section">
+                <h3>📋 Telegram Leads</h3>
+                <div style="overflow-x: auto;">
+                    <table class="events-table" id="leads-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>First Seen</th>
+                                <th>Messages</th>
+                                <th>Link Sent</th>
+                                <th>Channel Invited</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leads-body">
+                            <tr><td colspan="5" class="empty-state">No leads yet. Waiting for messages...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -649,7 +688,7 @@
         }
 
         async function loadData() {
-            await Promise.all([fetchVisits(), fetchOutreach()]);
+            await Promise.all([fetchVisits(), fetchOutreach(), fetchLeads(), fetchBotStats()]);
             renderDashboard();
         }
 
@@ -689,6 +728,62 @@
                 });
                 if (res.ok) allOutreach = await res.json();
             } catch (e) { console.error('Error fetching outreach:', e); }
+        }
+
+        async function fetchLeads() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/leads?order=timestamp.desc&limit=500`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                });
+                if (res.ok) {
+                    const leads = await res.json();
+                    renderLeads(leads);
+                }
+            } catch (e) { console.error('Error fetching leads:', e); }
+        }
+
+        async function fetchBotStats() {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/bot_stats?date=eq.${today}`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                });
+                if (res.ok) {
+                    const stats = await res.json();
+                    if (stats.length > 0) {
+                        document.getElementById('unique-users-today').textContent = stats[0].unique_users || 0;
+                        document.getElementById('links-sent-today').textContent = stats[0].links_sent || 0;
+                    }
+                }
+                // Also get total leads count
+                const totalRes = await fetch(`${SUPABASE_URL}/rest/v1/leads?select=id`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                });
+                if (totalRes.ok) {
+                    const allLeads = await totalRes.json();
+                    document.getElementById('total-leads').textContent = allLeads.length;
+                }
+            } catch (e) { console.error('Error fetching bot stats:', e); }
+        }
+
+        function renderLeads(leads) {
+            const tbody = document.getElementById('leads-body');
+            if (!leads || leads.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No leads yet. Waiting for messages...</td></tr>';
+                return;
+            }
+            tbody.innerHTML = leads.map(lead => {
+                const time = lead.timestamp ? new Date(lead.timestamp).toLocaleString() : 'Unknown';
+                const linkSent = lead.link_sent ? '✅ Yes' : '❌ No';
+                const channelInvited = lead.channel_invited ? '✅ Yes' : '❌ No';
+                return `<tr>
+                    <td><strong>@${lead.username || 'Unknown'}</strong></td>
+                    <td style="font-size: 0.75rem; color: var(--text-muted);">${time}</td>
+                    <td>${lead.message_count || 1}</td>
+                    <td>${linkSent}</td>
+                    <td>${channelInvited}</td>
+                </tr>`;
+            }).join('');
         }
 
         function refreshData() { loadData(); }
