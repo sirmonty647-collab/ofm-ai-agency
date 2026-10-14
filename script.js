@@ -14,7 +14,7 @@ const SUPABASE_KEY = 'sb_publishable_9qzgTB6orAb-MSJO8s5qAg_2XLRxTOL';
 const CONFIG = {
     SESSION_KEY: 'stella_session',
     AGE_VERIFIED_KEY: 'stella_age_verified',
-    FANVUE_URL: 'https://www.fanvue.com/stellalina'
+    FANVUE_URL: 'https://www.fanvue.com/stellacatalina'
 };
 
 // ============================================
@@ -139,12 +139,6 @@ const Tracker = {
         this.pushToSupabase();
     },
 
-    trackGalleryView() {
-        this.data.galleryViews++;
-        this.trackEvent('gallery_view', { total: this.data.galleryViews });
-        this.save();
-    },
-
     save() {
         try {
             localStorage.setItem('tracking_data', JSON.stringify(this.data));
@@ -185,7 +179,8 @@ const Tracker = {
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                keepalive: true
             });
         } catch (e) {
             // Silent fail — heartbeat isn't critical
@@ -224,7 +219,8 @@ const Tracker = {
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                keepalive: true
             });
         } catch (e) {
             console.log('Supabase push error:', e);
@@ -273,69 +269,6 @@ function initAgeVerification() {
     noBtn.addEventListener('click', () => {
         Tracker.trackEvent('age_rejected', {});
         window.location.href = 'https://google.com';
-    });
-}
-
-// ============================================
-// GALLERY
-// ============================================
-function initGallery() {
-    const grid = document.getElementById('gallery-grid');
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxClose = document.querySelector('.lightbox-close');
-
-    const galleryImages = [
-        "models/stella/gallery/image (1).webp",
-        "models/stella/gallery/image2.webp",
-        "models/stella/gallery/photoshoot1.webp",
-        "models/stella/gallery/selfie1.webp"
-    ];
-
-    galleryImages.forEach(src => {
-        const img = document.createElement('img');
-        img.src = src;
-        img.loading = 'lazy';
-        img.alt = 'Stella';
-        
-        img.addEventListener('click', () => {
-            lightboxImg.src = src;
-            lightbox.classList.add('active');
-            Tracker.trackGalleryView();
-        });
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        img.style.opacity = '0';
-        img.style.transform = 'translateY(20px)';
-        img.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(img);
-
-        grid.appendChild(img);
-    });
-
-    lightboxClose.addEventListener('click', () => {
-        lightbox.classList.remove('active');
-    });
-
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) {
-            lightbox.classList.remove('active');
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            lightbox.classList.remove('active');
-        }
     });
 }
 
@@ -412,37 +345,21 @@ async function initLocationBadge() {
 }
 
 // ============================================
-// SCROLL HINT
-// ============================================
-function initScrollHint() {
-    const hint = document.querySelector('.scroll-hint');
-    if (!hint) return;
-
-    hint.addEventListener('click', () => {
-        document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
-    });
-}
-
-// ============================================
-// CTA CLICK HANDLER — Track THEN navigate
+// CTA CLICK HANDLER — track, then let the browser navigate
 // ============================================
 function initCTAButtons() {
     const heroBtn = document.getElementById('cta-btn-hero');
-    const galleryBtn = document.getElementById('cta-btn-gallery');
+    const finalBtn = document.getElementById('cta-btn-gallery');
 
-    [heroBtn, galleryBtn].forEach(btn => {
+    [heroBtn, finalBtn].forEach(btn => {
         if (!btn) return;
-        btn.addEventListener('click', function(e) {
-            e.preventDefault(); // Stop immediate navigation
-            const url = this.href;
-
-            // Track the click
+        btn.addEventListener('click', function() {
+            // IMPORTANT: do NOT preventDefault() and do NOT window.open() from
+            // a setTimeout — Safari and Chrome popup blockers silently kill
+            // that, which meant a chunk of paid clicks went nowhere.
+            // The anchors already carry target="_blank", so the browser
+            // handles navigation natively and we just log the click next to it.
             Tracker.trackFanvueClick();
-
-            // Small delay to let Supabase request fire, then navigate
-            setTimeout(() => {
-                window.open(url, '_blank');
-            }, 300);
         });
     });
 }
@@ -566,9 +483,7 @@ function initShootingStars() {
 document.addEventListener('DOMContentLoaded', () => {
     Tracker.init();
     initAgeVerification();
-    initGallery();
     initLocationBadge();
-    initScrollHint();
     initCTAButtons();
     initShootingStars();
 
